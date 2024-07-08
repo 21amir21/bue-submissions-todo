@@ -1,6 +1,7 @@
 config.json
 courses.json
 .idea/
+.vscode/
 __pycache__/
 build
 .DS_Store
