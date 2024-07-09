@@ -10,10 +10,14 @@ def show_welcome_msg():
 
 
 def ask_for_credentials():
-    print("CmsNotifier needs to be configured first. This is a one-time process.")
+    print("The Script needs to be configured first. This is a one-time process.")
     print("This tool requires your BUE credentials to access the E=Learning.")
     print(
         "Don't worry, your credentials are stored locally and are not shared with anyone."
     )
     bue_username = input("What is your BUE username? ")
     bue_password = input("What is your BUE password? ")
+    print("Now, we need to authorize the script to access your Todoist account.")
+    print(
+        "A browser window will open, please authorize the script to access your Todoist account."
+    )

@@ -27,5 +27,5 @@ def load_config() -> Config:
         return jsonpickle.decode(f.read())
 
 
-def is_configured():
+def is_configured() -> bool:
     return os.path.isfile(CONFIG_FILE)
