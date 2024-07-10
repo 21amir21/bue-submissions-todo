@@ -1,4 +1,5 @@
 from config import Config
+from ms_todo_helpers import get_ms_todo_auth_code, get_access_token
 
 
 def show_welcome_msg():
@@ -21,3 +22,5 @@ def ask_for_credentials():
     print(
         "A browser window will open, please authorize the script to access your Todoist account."
     )
+    todo_auth_code = get_ms_todo_auth_code()
+    todo_token = get_access_token(todo_auth_code)
