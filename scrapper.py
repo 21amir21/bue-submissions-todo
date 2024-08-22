@@ -16,7 +16,7 @@ CALENDAR_TABLE_ID = "#month-detailed-66c77365d26d266c77365adeb625"
 COURSE_DATA_FILE = "courses.json"
 
 
-class ItemType(Enum, str):
+class ItemType(str, Enum):
     ASSIGNMENT = "Assignment Submission"
     PROJECT = "Phase Submission"
     OTHERS = "Others"
