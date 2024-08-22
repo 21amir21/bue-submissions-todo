@@ -13,6 +13,9 @@ class Config:
         self.course_aliases = {}
         self.ms_todo_courses_sections = {}
 
+    def __str__(self) -> str:
+        return f"The config file for {self.bue_username}"
+
 
 def save_config(config: Config):
     with open(CONFIG_FILE, "w+") as f:

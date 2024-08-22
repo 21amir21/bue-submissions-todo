@@ -34,7 +34,6 @@ scopes = ["Tasks.ReadWrite"]
 
 # might need to REFACTOR this and make it with flask
 def get_ms_todo_auth_code():
-
     params = {
         "client_id": CLIENT_ID,
         "response_type": "code",
@@ -42,6 +41,7 @@ def get_ms_todo_auth_code():
         "response_type": "query",
         "scope": scopes,
     }
+
     authorization_url = f"{authority_url}?{urlencode(params)}"
 
     class AuthorizeServer(BaseHTTPRequestHandler):
