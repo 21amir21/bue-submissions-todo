@@ -75,6 +75,7 @@ def scrape_bue_calendar(config: Config):
     res = automate_getting_calendar(config)
     soup = bs4.BeautifulSoup(res.content, "html.parser")
 
+    print("Scrapping BUE Calendar for Submissions...")
     # Find all days with submissions
     days_with_submissions = soup.find_all("td", class_="clickable")
     if not days_with_submissions:
@@ -106,11 +107,12 @@ def scrape_bue_calendar(config: Config):
                 }
                 submissions.append(submission_details)
 
-    if not submissions:
-        print("No submissions found.")
-    else:
-        for submission in submissions:
-            print(f"Date: {submission['date']}")
-            print(f"Title: {submission['title']}")
-            print(f"Link: {submission['link']}")
-            print("----------")
+    # if not submissions:
+    #     print("No submissions found.")
+    # else:
+    #     for submission in submissions:
+    #         print(f"Date: {submission['date']}")
+    #         print(f"Title: {submission['title']}")
+    #         print(f"Link: {submission['link']}")
+    #         print("----------")
+    return submissions

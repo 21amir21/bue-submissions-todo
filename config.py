@@ -1,20 +1,19 @@
 import os.path
 import jsonpickle
 
+# from ms_todo_helpers import get_ms_todo_auth_code, get_access_token
+
 CONFIG_FILE = "config.json"
 
 
 class Config:
-    def __init__(self, bue_username, bue_password, ms_todo_token, ms_todo_list):
+    def __init__(self, bue_username, bue_password, ms_todo_token):
         self.bue_username = bue_username
         self.bue_password = bue_password
         self.ms_todo_token = ms_todo_token
-        self.ms_todo_list = ms_todo_list
-        self.course_aliases = {}
-        self.ms_todo_courses_sections = {}
-
-    def __str__(self) -> str:
-        return f"The config file for {self.bue_username}"
+        # self.ms_todo_list = ms_todo_list
+        # self.course_aliases = {}
+        # self.ms_todo_courses_sections = {}
 
 
 def save_config(config: Config):

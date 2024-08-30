@@ -1,12 +1,12 @@
 import requests
+import os
 import webbrowser
 from urllib.parse import urlencode, urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import os
-
 from msgraph import GraphServiceClient
 from msgraph.generated.models.todo_task import TodoTask
 from msgraph.generated.models.linked_resource import LinkedResource
+from config import Config
 
 
 CLIENT_ID = os.getenv("CLIENT_ID")
@@ -17,10 +17,10 @@ SERVER_PORT = 5050
 
 APP_ID = os.getenv("APP_ID")
 
-redirect_uri = f"http://localhost:{SERVER_PORT}/callback"
-authority_url = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/authorize"
-token_url = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token"
-scopes = ["Tasks.ReadWrite"]
+REDIRECT_URI = f"http://localhost:{SERVER_PORT}/callback"
+AUTHORITY_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/authorize"
+TOKEN_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token"
+SCOPES = ["Tasks.ReadWrite"]
 
 
 # def create_confidential_client(
@@ -37,12 +37,12 @@ def get_ms_todo_auth_code():
     params = {
         "client_id": CLIENT_ID,
         "response_type": "code",
-        "redirect_uri": redirect_uri,
+        "redirect_uri": REDIRECT_URI,
         "response_type": "query",
-        "scope": scopes,
+        "scope": SCOPES,
     }
 
-    authorization_url = f"{authority_url}?{urlencode(params)}"
+    authorization_url = f"{AUTHORITY_URL}?{urlencode(params)}"
 
     class AuthorizeServer(BaseHTTPRequestHandler):
         auth_code = ""
@@ -58,7 +58,7 @@ def get_ms_todo_auth_code():
                 bytes("Authorization completed. You can close this.", "utf-8")
             )
 
-        def log_message(self, format: str, *args: os.Any) -> None:
+        def log_message(self, format: str, *args) -> None:
             return
 
     webbrowser.open(authorization_url)
@@ -76,17 +76,57 @@ def get_access_token(auth_code):
         "client_secret": CLIENT_SECRET,
         "grant_type": "authorization_code",
         "code": auth_code,
-        "redirect_uri": redirect_uri,
-        "scope": scopes,
+        "redirect_uri": REDIRECT_URI,
+        "scope": SCOPES,
     }
 
-    response = requests.post(url=token_url, data=token_data)
+    response = requests.post(url=TOKEN_URL, data=token_data)
     data = response.json()
 
     return data["access_token"]
 
 
 # in order to continue must read the docs
-# https://learn.microsoft.com/en-us/graph/api/resources/todo-overview?view=graph-rest-1.0
+# https://learn.microsoft
+# .com/en-us/graph/api/resources/todo-overview?view=graph-rest-1.0
 
-graph_client = GraphServiceClient(get_access_token(get_ms_todo_auth_code()), scopes)
+# graph_client = GraphServiceClient(get_access_token(get_ms_todo_auth_code()), SCOPES)
+
+
+class GraphApiHelper:
+    def __init__(self, graph_client: GraphServiceClient, config: Config):
+        self.graph_client = graph_client
+        self.config = config
+
+    # Do i Really have to make it async ?!
+    def create_task(self, submissions: list):
+        # submissions = scrape_bue_calendar(self.config)
+
+        for submission in submissions:
+            request_body = TodoTask(
+                title=submission["title"],
+                categories=[
+                    "Important",
+                ],
+                linked_resources=[
+                    LinkedResource(
+                        web_url=submission["link"],
+                        application_name="Microsoft",
+                        display_name="Microsoft",
+                    ),
+                ],
+            )
+
+            tasks_lists = self.graph_client.me.todo.lists.get()
+            important_list = next(
+                (
+                    task_list
+                    for task_list in tasks_lists.value
+                    if task_list.display_name == "Important"
+                ),
+                None,
+            )
+
+            result = self.graph_client.me.todo.lists.by_todo_task_list_id(
+                important_list.id
+            ).tasks.post(request_body)
