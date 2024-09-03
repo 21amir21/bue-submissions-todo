@@ -8,28 +8,36 @@ from msgraph.generated.models.todo_task import TodoTask
 from msgraph.generated.models.linked_resource import LinkedResource
 from config import Config
 
+from msal import ConfidentialClientApplication
+
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 TENANT_ID = os.getenv("TENANT_ID")
 
-SERVER_PORT = 5050
+SERVER_PORT = 5050  # or 5000
 
 APP_ID = os.getenv("APP_ID")
 
 REDIRECT_URI = f"http://localhost:{SERVER_PORT}/callback"
-AUTHORITY_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/authorize"
+# AUTHORITY_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/authorize"
+AUTHORITY_URL = "https://login.microsoftonline.com/consumers"
 TOKEN_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token"
 SCOPES = ["Tasks.ReadWrite"]
 
 
-# def create_confidential_client(
-#     client_id: str | None, client_secret: str | None, authority: str | None
-# ):
-#     """Call it in the main and then make an app from it"""
-#     return ConfidentialClientApplication(
-#         client_id=CLIENT_ID, client_credential=CLIENT_SECRET, authority=authority_url
-#     )
+def create_confidential_client(
+    client_id: str | None, client_secret: str | None, authority: str | None
+):
+    """Call it in the main and then make an app from it"""
+    return ConfidentialClientApplication(
+        client_id=CLIENT_ID, client_credential=CLIENT_SECRET, authority=AUTHORITY_URL
+    )
+
+
+def get_access_token(app: ConfidentialClientApplication, scopes):
+    auth_url = app.get_authorization_request_url(scopes)
+    webbrowser.open(auth_url, new=True)
 
 
 # might need to REFACTOR this and make it with flask
@@ -70,7 +78,7 @@ def get_ms_todo_auth_code():
     return AuthorizeServer.auth_code
 
 
-def get_access_token(auth_code):
+def get_access_tokennn(auth_code):
     token_data = {
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
