@@ -1,4 +1,4 @@
-import os.path
+import os
 import jsonpickle
 
 # from ms_todo_helpers import get_ms_todo_auth_code, get_access_token
