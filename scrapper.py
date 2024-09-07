@@ -9,7 +9,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 LOGIN_URL = "https://learn1.bue.edu.eg/login/index.php"
-CALENDAR_URL = "https://learn1.bue.edu.eg/calendar/view.php"
+CALENDAR_URL = (
+    f"https://learn1.bue.edu.eg/calendar/view.php?view=month&time={int(time.time())}"
+)
 
 
 def automate_getting_calendar(config: Config) -> requests.Response:
